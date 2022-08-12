@@ -56,16 +56,15 @@ export class App extends Component {
 
   hendleSubmit = e => {
     e.preventDefault();
-    this.fetch();
     this.setState({
       images: null,
       perPage: 12,
     });
+    this.fetch();
   };
 
   hendleLoade = e => {
     this.setState(prevState => ({
-      page: prevState.page + 1,
       perPage: prevState.perPage + 12,
     }));
   };
