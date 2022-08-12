@@ -38,7 +38,7 @@ export class App extends Component {
 
   fetch = () => {
     const key = '27831105-5e5b5e1ddfe0fd39cdbde4893';
-    const URL = `https://pixabay.com/api`;
+    const URL = `https://pixabay.com/api/`;
     const page = this.state.page;
     const perPage = this.state.perPage;
     const option = {
