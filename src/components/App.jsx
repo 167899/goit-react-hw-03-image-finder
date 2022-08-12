@@ -19,7 +19,7 @@ export class App extends Component {
     largeImageURL: null,
   };
 
-  async componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps, prevState) {
     if (prevState.perPage !== this.state.perPage) {
       this.fetch();
     }
@@ -35,7 +35,7 @@ export class App extends Component {
     this.setState({ name: value });
   };
 
-  fetch = () => {
+  async fetch() {
     const key = '27831105-5e5b5e1ddfe0fd39cdbde4893';
     const URL = `https://pixabay.com/api/`;
     const perPage = this.state.perPage;
@@ -49,7 +49,7 @@ export class App extends Component {
       },
     };
     this.setState({ loading: true });
-    axios
+   await axios
       .get(URL, option)
       .then(images => this.setState({ images: images.data, loading: false }));
   };
