@@ -12,22 +12,48 @@ import { Modal } from './Modal/Modal';
 export class App extends Component {
   state = {
     name: '',
-    images: null,
+    query: '',
+    images: [],
+    total: null,
     loading: false,
     perPage: 12,
+    page: 1,
     showModal: false,
     largeImageURL: null,
   };
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.perPage !== this.state.perPage) {
+    if (
+      prevState.page !== this.state.page ||
+      (prevState.query !== this.state.query && this.state.query !== '')
+    ) {
       this.fetch();
     }
-    if (prevState.name !== this.state.name && this.state.name === '') {
-      this.setState({
-        images: null,
-      });
-    }
+  }
+
+  async fetch() {
+    const key = '27831105-5e5b5e1ddfe0fd39cdbde4893';
+    const URL = `https://pixabay.com/api/`;
+    const perPage = this.state.perPage;
+    const page = this.state.page;
+    const option = {
+      params: {
+        key: `${key}`,
+        q: `${this.state.name}`,
+        image_type: 'photo',
+        orientation: 'horizontal',
+        page: `${page}`,
+        per_page: `${perPage}`,
+      },
+    };
+    this.setState({ loading: true });
+    await axios.get(URL, option).then(images =>
+      this.setState(prevState => ({
+        images: [...prevState.images, ...images.data.hits],
+        total: images.data.total,
+        loading: false,
+      }))
+    );
   }
 
   hendleChange = e => {
@@ -35,37 +61,22 @@ export class App extends Component {
     this.setState({ name: value });
   };
 
-  async fetch() {
-    const key = '27831105-5e5b5e1ddfe0fd39cdbde4893';
-    const URL = `https://pixabay.com/api/`;
-    const perPage = this.state.perPage;
-    const option = {
-      params: {
-        key: `${key}`,
-        q: `${this.state.name}`,
-        image_type: 'photo',
-        orientation: 'horizontal',
-        per_page: `${perPage}`,
-      },
-    };
-    this.setState({ loading: true });
-   await axios
-      .get(URL, option)
-      .then(images => this.setState({ images: images.data, loading: false }));
-  };
-
   hendleSubmit = e => {
     e.preventDefault();
+
+    this.setState(
+      this.state.query !== this.state.name && { query: this.state.name }
+    );
+
     this.setState({
-      images: null,
-      perPage: 12,
+      images: [],
+      page: 1,
     });
-    this.fetch();
   };
 
   hendleLoade = e => {
     this.setState(prevState => ({
-      perPage: prevState.perPage + 12,
+      page: prevState.page + 1,
     }));
   };
 
@@ -89,13 +100,13 @@ export class App extends Component {
           onChange={this.hendleChange}
         />
 
-        {this.state.images && (
+        {this.state.images.length !== 0 && (
           <>
             <ImageGallery
-              images={this.state.images.hits}
+              images={this.state.images}
               toggleModal={this.toggleModal}
             />
-            {this.state.loading && (
+            {this.state.loading ? (
               <ThreeDots
                 height="80"
                 s
@@ -110,8 +121,11 @@ export class App extends Component {
                 wrapperClassName=""
                 visible={true}
               />
+            ) : (
+              this.state.images.length < this.state.total && (
+                <Button onClick={this.hendleLoade} />
+              )
             )}
-            <Button onClick={this.hendleLoade} />
           </>
         )}
         {this.state.showModal && (

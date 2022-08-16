@@ -22,9 +22,7 @@ export const ImageGallery = ({ images, toggleModal }) => {
 ImageGallery.propTypes = {
   images: PropTypes.arrayOf(
     PropTypes.shape({
-      key: PropTypes.number.isRequired,
       id: PropTypes.number.isRequired,
-      src: PropTypes.string,
     })
   ),
   toggleModal: PropTypes.func.isRequired,
