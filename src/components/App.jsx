@@ -39,7 +39,7 @@ export class App extends Component {
     const option = {
       params: {
         key: `${key}`,
-        q: `${this.state.name}`,
+        q: `${this.state.query}`,
         image_type: 'photo',
         orientation: 'horizontal',
         page: `${page}`,
@@ -64,14 +64,13 @@ export class App extends Component {
   hendleSubmit = e => {
     e.preventDefault();
 
-    this.setState(
-      this.state.query !== this.state.name && { query: this.state.name }
-    );
-
-    this.setState({
-      images: [],
-      page: 1,
-    });
+    if (this.state.query !== this.state.name && this.state.name !== '') {
+      this.setState({
+        query: this.state.name,
+        images: [],
+        page: 1,
+      });
+    }
   };
 
   hendleLoade = e => {
@@ -87,7 +86,7 @@ export class App extends Component {
   toggleModal = e => {
     this.onClickModal();
     const ID = e.currentTarget.id;
-    const img = this.state.images.hits.find(e => e.id === Number(ID));
+    const img = this.state.images.find(e => e.id === Number(ID));
     this.setState({ largeImageURL: img.largeImageURL });
   };
 
